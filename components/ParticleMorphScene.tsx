@@ -88,7 +88,7 @@ function makeLogo(count: number) {
   for (let y = 0; y < canvas.height; y += 3) for (let x = 0; x < canvas.width; x += 3) if (data[(y * canvas.width + x) * 4 + 3] > 100) pixels.push([x, y]);
   const result = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
-    const p = pixels[Math.floor(Math.random() * pixels.length)];
+    const p = pixels[Math.floor(math.random() * pixels.length)];
     result[i * 3] = (p[0] / canvas.width - .5) * 7.2 + random(-.035, .035);
     result[i * 3 + 1] = (.5 - p[1] / canvas.height) * 4.3 + random(-.035, .035);
     result[i * 3 + 2] = random(-.35, .35);
@@ -124,7 +124,7 @@ export function ParticleMorphScene() {
     const canvas = canvasRef.current;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isMobile = window.innerWidth < 700;
-    const count = isMobile ? 1250 : 2350;
+    const  count = isMobile ? 1250 : 2350;
     const cardCount = isMobile ? 80 : 150;
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.55));
@@ -156,14 +156,19 @@ export function ParticleMorphScene() {
       vertexShader: `attribute vec3 aColor; attribute float aSize; varying vec3 vColor; varying float vDepth;
         void main(){ vec4 mv=modelViewMatrix*vec4(position,1.0); gl_Position=projectionMatrix*mv; gl_PointSize=aSize*(7.0/-mv.z); vColor=aColor; vDepth=clamp((-mv.z-3.0)/7.0,0.0,1.0); }`,
       fragmentShader: `varying vec3 vColor; varying float vDepth;
-        void main(){ vec2 p=gl_PointCoord*2.0-1.0; p.y*=-1.0; float d=max(abs(p.x)*0.866+p.y*0.5,-p.y); if(d>0.62||d<0.45) discard; float a=mix(0.18,0.70,vDepth); gl_FragColor=vec4(vColor,a); }`,
+        void main(){ vec2 p=gl_PointCoord*2.0-1.0; p.y*=-1.0; float d=max(abs(p.x)*0.866+p.y*0.5,-p.y); if(d>0.62||d<0.45) discard; float a=mix(0.18,0.70,vepth); gl_FragColor=vec4(vColor,a); }`,
     });
     const points = new THREE.Points(geometry, pointMaterial);
     scene.add(points);
 
     let cardMesh: THREE.Mesh | null = null;
     let cardOffsets: THREE.InstancedBufferAttribute | null = null;
+    let cardRects: THREE.InstancedBufferAttribute | null = null;
+    let cardNextRects: THREE.InstancedBufferAttribute | null = null;
+    let cardMaterial: THREE.ShaderMaterial | null = null;
     let cardCurrent = new Float32Array(cardCount * 3);
+    let photoMix = 1;
+    let atlasShift = 0;
     let disposed = false;
     makeAtlas().then(texture => {
       if (disposed) { texture.dispose(); return; }
@@ -180,19 +185,25 @@ export function ParticleMorphScene() {
       cardOffsets = new THREE.InstancedBufferAttribute(cardCurrent, 3);
       instanced.setAttribute('instanceOffset', cardOffsets);
       const rects = new Float32Array(cardCount * 4);
+      const nextRects = new Float32Array(cardCount * 4);
       for (let i = 0; i < cardCount; i++) {
         const tile = i % 24, col = tile % 6, row = Math.floor(tile / 6);
         rects.set([col / 6, 1 - (row + 1) / 4, 1 / 6, 1 / 4], i * 4);
+        nextRects.set([col / 6, 1 - (row + 1) / 4, 1 / 6, 1 / 4], i * 4);
       }
-      instanced.setAttribute('uvRect', new THREE.InstancedBufferAttribute(rects, 4));
+      cardRects = new THREE.InstancedBufferAttribute(rects, 4);
+      cardNextRects = new THREE.InstancedBufferAttribute(nextRects, 4);
+      instanced.setAttribute('uvRect', cardRects);
+      instanced.setAttribute('uvRectNext', cardNextRects);
       instanced.instanceCount = cardCount;
       const material = new THREE.ShaderMaterial({
-        uniforms: { map: { value: texture } }, transparent: true, depthWrite: false,
-        vertexShader: `attribute vec3 instanceOffset; attribute vec4 uvRect; varying vec2 vUv; varying float vDepth;
-          void main(){ vec4 mv=modelViewMatrix*vec4(instanceOffset,1.0); mv.xy+=position.xy*.34; gl_Position=projectionMatrix*mv; vUv=uvRect.xy+uv*uvRect.zw; vDepth=clamp((-mv.z-2.5)/8.0,0.0,1.0); }`,
-        fragmentShader: `uniform sampler2D map; varying vec2 vUv; varying float vDepth;
-          void main(){ vec2 q=fract(vUv*vec2(6.0,4.0)); float r=.09; vec2 d=abs(q-.5)-vec2(.5-r); float mask=1.0-smoothstep(r-.02,r+.01,length(max(d,0.0))+min(max(d.x,d.y),0.0)); vec4 c=texture2D(map,vUv); gl_FragColor=vec4(c.rgb,mix(.12,.44,vDepth)*mask); }`,
+        uniforms: { map: { value: texture }, uPhotoMix: { value: 1 } }, transparent: true, depthWrite: false,
+        vertexShader: `attribute vec3 instanceOffset; attribute vec4 uvRect; attribute vec4 uvRectNext; varying vec2 vUv; varying vec2 vUvNext; varying float vDepth;
+          void main(){ vec4 mv=modelViewMatrix*vec4(instanceOffset,1.0); mv.xy+=position.xy*.34; gl_Position=projectionMatrix*mv; vUv=uvRect.xy+uv*uvRect.zw; vUvNext=uvRectNext.xy+uv*uvRectNext.zw; vDepth=clamp((-mv.z-2.5)/8.0,0.0,1.0); }`,
+        fragmentShader: `uniform sampler2D map; uniform float uPhotoMix; varying vec2 vUv; varying vec2 vUvNext; varying float vDepth;
+          void main(){ vec2 q=fract(vUv*vec2(6.0,4.0)); float r=.09; vec2 d=abs(q-.5)-vec2(.5-r); float mask=1.0-smoothstep(r-.02,r+.01,length(max(d,0.0))+min(max(d.x,d.y),0.0)); vec4 currentPhoto=texture2D(map,vUv); vec4 nextPhoto=texture2D(map,vUvNext); vec4 c=mix(currentPhoto,nextPhoto,smoothstep(0.0,1.0,uPhotoMix)); gl_FragColor=vec4(c.rgb,mix(.12,.44,vDepth)*mask); }`,
       });
+      cardMaterial = material;
       cardMesh = new THREE.Mesh(instanced, material); scene.add(cardMesh);
       plane.dispose();
     });
@@ -219,7 +230,27 @@ export function ParticleMorphScene() {
     onScroll();
 
     let pointerX = 0, pointerY = 0;
-    const onPointer = (event: PointerEvent) => { pointerX = event.clientX / window.innerWidth - .5; pointerY = event.clientY / window.innerHeight - .5; };
+    const onPointer = (event: PointerEvent) => {
+      if (reducedMotion) return;
+      pointerX = event.clientX / window.innerWidth - .5;
+      pointerY = event.clientY / window.innerHeight - .5;
+      const column = Math.min(5, Math.max(0, Math.floor((pointerX + .5) * 6)));
+      const row = Math.min(3, Math.max(0, Math.floor((pointerY + .5) * 4)));
+      const nextShift = row * 6 + column;
+      if (nextShift === atlasShift || !cardRects || !cardNextRects) return;
+      const rects = cardRects.array as Float32Array;
+      const nextRects = cardNextRects.array as Float32Array;
+      rects.set(photoMix > .5 ? nextRects : rects);
+      for (let i = 0; i < cardCount; i++) {
+        const tile = (i + nextShift * 7) % 24;
+        const col = tile % 6, atlasRow = Math.floor(tile / 6);
+        nextRects.set([col / 6, 1 - (atlasRow + 1) / 4, 1 / 6, 1 / 4], i * 4);
+      }
+      cardRects.needsUpdate = true;
+      cardNextRects.nedsUpdate = true;
+      photoMix = 0;
+      atlasShift = nextShift;
+    };
     window.addEventListener('pointermove', onPointer, { passive: true });
     const onResize = () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight, false); };
     window.addEventListener('resize', onResize);
@@ -239,6 +270,14 @@ export function ParticleMorphScene() {
         points.rotation.y += .00045;
         camera.position.x += (pointerX * .28 - camera.position.x) * .035;
         camera.position.y += (-pointerY * .20 - camera.position.y) * .035;
+        if (cardMesh) {
+          cardMesh.position.x += (pointerX * .58 - cardMesh.position.x) * .045;
+          cardMesh.position.y += (-pointerY * .38 - cardMesh.position.y) * .045;
+        }
+        if (cardMaterial) {
+          photoMix += (1 - photoMix) * .075;
+          cardMaterial.uniforms.uPhotoMix.value = photoMix;
+        }
       }
       if (cardOffsets) {
         for (let i = 0; i < cardCount; i++) {
