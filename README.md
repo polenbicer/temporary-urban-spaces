@@ -6,7 +6,7 @@ The website combines a scroll-led narrative with a complete 64-image field atlas
 
 ## Live site
 
-[temporary-urban-spaces.polenbicer.chatgpt.site](https://temporary-urban-spaces.polenbicer.chatgpt.site)
+[polenbicer.github.io/temporary-urban-spaces](https://polenbicer.github.io/temporary-urban-spaces/)
 
 ## Development
 
@@ -26,7 +26,7 @@ pnpm build
 - Vinext / React
 - TypeScript
 - Tailwind CSS
-- Cloudflare Workers through OpenAI Sites
+- GitHub Pages deployment through GitHub Actions
 
 ## Content
 
