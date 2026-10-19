@@ -1,0 +1,136 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create static GitHub Pages entry
+        run: |
+          mkdir -p github-pages/src github-pages/saha github-pages/atlas github-pages/notlar
+
+          cat > github-pages/src/main.tsx <<'EOF'
+          import React from 'react';
+          import { createRoot } from 'react-dom/client';
+          import Home from '../../app/page';
+          import Saha from '../../app/saha/page';
+          import Atlas from '../../app/atlas/page';
+          import Notlar from '../../app/notlar/page';
+          import '../../app/globals.css';
+
+          const route = window.location.pathname
+            .replace(/^\/temporary-urban-spaces/, '')
+            .replace(/\/$/, '') || '/';
+          const Page = route === '/saha' ? Saha : route === '/atlas' ? Atlas : route === '/notlar' ? Notlar : Home;
+
+          document.documentElement.lang = 'tr';
+          document.title = 'Gümüşlük Field Notes — Temporary Urban Spaces';
+          createRoot(document.getElementById('root')!).render(<Page />);
+          EOF
+
+          cat > github-pages/vite.config.ts <<'EOF'
+          import { defineConfig } from 'vite';
+          import react from '@vitejs/plugin-react';
+          import tailwindcss from '@tailwindcss/postcss';
+          import { resolve } from 'node:path';
+
+          const repositoryBase = '/temporary-urban-spaces/';
+
+          export default defineConfig({
+            root: resolve(__dirname),
+            base: repositoryBase,
+            publicDir: resolve(__dirname, '../public'),
+            resolve: { alias: { '@': resolve(__dirname, '..') } },
+            css: { postcss: { plugins: [tailwindcss()] } },
+            plugins: [
+              {
+                name: 'github-pages-base-path',
+                enforce: 'pre',
+                transform(code, id) {
+                  if (id.includes('/node_modules/') || id.includes('/github-pages/') || !/\.(tsx?|css)$/.test(id)) return null;
+                  return code
+                    .replace(/(["'`])\/(?=[A-Za-z])/g, `$1${repositoryBase}`)
+                    .replace(/href="\/"/g, `href="${repositoryBase}"`);
+                },
+              },
+              react(),
+            ],
+            build: {
+              outDir: resolve(__dirname, '../github-dist'),
+              emptyOutDir: true,
+              rollupOptions: {
+                input: {
+                  index: resolve(__dirname, 'index.html'),
+                  saha: resolve(__dirname, 'saha/index.html'),
+                  atlas: resolve(__dirname, 'atlas/index.html'),
+                  notlar: resolve(__dirname, 'notlar/index.html'),
+                },
+              },
+            },
+          });
+          EOF
+
+          for page in index.html saha/index.html atlas/index.html notlar/index.html; do
+            cat > "github-pages/$page" <<'EOF'
+          <!doctype html>
+          <html lang="tr">
+            <head>
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+              <meta name="theme-color" content="#050506" />
+              <meta name="description" content="Gümüşlük'te geçici kentsel mekânlar üzerine görsel saha araştırması." />
+              <link rel="icon" href="/temporary-urban-spaces/favicon.svg" />
+              <title>Gümüşlük Field Notes — Temporary Urban Spaces</title>
+            </head>
+            <body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body>
+          </html>
+          EOF
+          done
+
+      - name: Build static site
+        run: pnpm exec vite build --config github-pages/vite.config.ts
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: github-dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
