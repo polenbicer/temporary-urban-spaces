@@ -3,7 +3,8 @@ name: Import source archive
 on:
   push:
     paths:
-      - temporary-urban-spaces-source.tar.gz
+      - .github/workflows/unpack-source.yml
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -13,15 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Expand project sources
+      - name: Download and expand project sources
         run: |
-          if [ ! -f temporary-urban-spaces-source.tar.gz ]; then
-            exit 0
-          fi
-          tar -xzf temporary-urban-spaces-source.tar.gz
-          rm temporary-urban-spaces-source.tar.gz
+          curl -fsSL https://temporary-urban-spaces.polenbicer.chatgpt.site/temporary-urban-spaces-source.tar.gz -o /tmp/source.tar.gz
+          tar -xzf /tmp/source.tar.gz
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Import animated urban spaces site"
+          git commit -m "Import animated urban spaces site" || exit 0
           git push
