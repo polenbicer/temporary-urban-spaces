@@ -36,7 +36,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pn`m install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Create static GitHub Pages entry
         run: |
@@ -97,7 +97,7 @@ jobs:
                   index: resolve(__dirname, 'index.html'),
                   saha: resolve(__dirname, 'saha/index.html'),
                   atlas: resolve(__dirname, 'atlas/index.html'),
-                  notlar : resolve(__dirname, 'notlar/index.html'),
+                  notlar: resolve(__dirname, 'notlar/index.html'),
                   manifesto: resolve(__dirname, 'manifesto/index.html'),
                 },
               },
@@ -113,9 +113,9 @@ jobs:
               <meta charset="UTF-8" />
               <meta name="viewport" content="width=device-width, initial-scale=1.0" />
               <meta name="theme-color" content="#050506" />
-              <meta name="description" content="Gümüşlük'te geçici kentsel mekanlar üzerine gòrsel saha araştırması." />
+              <meta name="description" content="Gümüşlük'te geçici kentsel mekanlar üzerine görsel saha araştırması." />
               <link rel="icon" href="/temporary-urban-spaces/favicon.svg" />
-              <title>Kümüşlük Field Notes — Temporary Urban Spaces</title>
+              <title>Gümüşlük Field Notes — Temporary Urban Spaces</title>
             </head>
             <body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body>
           </html>
@@ -123,7 +123,7 @@ jobs:
           done
 
       - name: Build static site
-        run: pn`m exec vite build --config github-pages/vite.config.ts
+        run: pnpm exec vite build --config github-pages/vite.config.ts
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
