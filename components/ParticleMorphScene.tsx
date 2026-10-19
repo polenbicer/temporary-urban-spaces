@@ -88,7 +88,7 @@ function makeLogo(count: number) {
   for (let y = 0; y < canvas.height; y += 3) for (let x = 0; x < canvas.width; x += 3) if (data[(y * canvas.width + x) * 4 + 3] > 100) pixels.push([x, y]);
   const result = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
-    const p = pixels[Math.floor(math.random() * pixels.length)];
+    const p = pixels[Math.floor(Math.random() * pixels.length)];
     result[i * 3] = (p[0] / canvas.width - .5) * 7.2 + random(-.035, .035);
     result[i * 3 + 1] = (.5 - p[1] / canvas.height) * 4.3 + random(-.035, .035);
     result[i * 3 + 2] = random(-.35, .35);
@@ -124,7 +124,7 @@ export function ParticleMorphScene() {
     const canvas = canvasRef.current;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isMobile = window.innerWidth < 700;
-    const  count = isMobile ? 1250 : 2350;
+    const count = isMobile ? 1250 : 2350;
     const cardCount = isMobile ? 80 : 150;
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.55));
@@ -156,7 +156,7 @@ export function ParticleMorphScene() {
       vertexShader: `attribute vec3 aColor; attribute float aSize; varying vec3 vColor; varying float vDepth;
         void main(){ vec4 mv=modelViewMatrix*vec4(position,1.0); gl_Position=projectionMatrix*mv; gl_PointSize=aSize*(7.0/-mv.z); vColor=aColor; vDepth=clamp((-mv.z-3.0)/7.0,0.0,1.0); }`,
       fragmentShader: `varying vec3 vColor; varying float vDepth;
-        void main(){ vec2 p=gl_PointCoord*2.0-1.0; p.y*=-1.0; float d=max(abs(p.x)*0.866+p.y*0.5,-p.y); if(d>0.62||d<0.45) discard; float a=mix(0.18,0.70,vepth); gl_FragColor=vec4(vColor,a); }`,
+        void main(){ vec2 p=gl_PointCoord*2.0-1.0; p.y*=-1.0; float d=max(abs(p.x)*0.866+p.y*0.5,-p.y); if(d>0.62||d<0.45) discard; float a=mix(0.18,0.70,vDepth); gl_FragColor=vec4(vColor,a); }`,
     });
     const points = new THREE.Points(geometry, pointMaterial);
     scene.add(points);
@@ -247,7 +247,7 @@ export function ParticleMorphScene() {
         nextRects.set([col / 6, 1 - (atlasRow + 1) / 4, 1 / 6, 1 / 4], i * 4);
       }
       cardRects.needsUpdate = true;
-      cardNextRects.nedsUpdate = true;
+      cardNextRects.needsUpdate = true;
       photoMix = 0;
       atlasShift = nextShift;
     };
