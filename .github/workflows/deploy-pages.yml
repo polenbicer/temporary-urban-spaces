@@ -36,11 +36,11 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pn`m install --frozen-lockfile
 
       - name: Create static GitHub Pages entry
         run: |
-          mkdir -p github-pages/src github-pages/saha github-pages/atlas github-pages/notlar
+          mkdir -p github-pages/src github-pages/saha github-pages/atlas github-pages/notlar github-pages/manifesto
 
           cat > github-pages/src/main.tsx <<'EOF'
           import React from 'react';
@@ -49,12 +49,13 @@ jobs:
           import Saha from '../../app/saha/page';
           import Atlas from '../../app/atlas/page';
           import Notlar from '../../app/notlar/page';
+          import Manifesto from '../../app/manifesto/page';
           import '../../app/globals.css';
 
           const route = window.location.pathname
             .replace(/^\/temporary-urban-spaces/, '')
             .replace(/\/$/, '') || '/';
-          const Page = route === '/saha' ? Saha : route === '/atlas' ? Atlas : route === '/notlar' ? Notlar : Home;
+          const Page = route === '/saha' ? Saha : route === '/atlas' ? Atlas : route === '/notlar' ? Notlar : route === '/manifesto' ? Manifesto : Home;
 
           document.documentElement.lang = 'tr';
           document.title = 'Gümüşlük Field Notes — Temporary Urban Spaces';
@@ -96,14 +97,15 @@ jobs:
                   index: resolve(__dirname, 'index.html'),
                   saha: resolve(__dirname, 'saha/index.html'),
                   atlas: resolve(__dirname, 'atlas/index.html'),
-                  notlar: resolve(__dirname, 'notlar/index.html'),
+                  notlar : resolve(__dirname, 'notlar/index.html'),
+                  manifesto: resolve(__dirname, 'manifesto/index.html'),
                 },
               },
             },
           });
           EOF
 
-          for page in index.html saha/index.html atlas/index.html notlar/index.html; do
+          for page in index.html saha/index.html atlas/index.html notlar/index.html manifesto/index.html; do
             cat > "github-pages/$page" <<'EOF'
           <!doctype html>
           <html lang="tr">
@@ -111,9 +113,9 @@ jobs:
               <meta charset="UTF-8" />
               <meta name="viewport" content="width=device-width, initial-scale=1.0" />
               <meta name="theme-color" content="#050506" />
-              <meta name="description" content="Gümüşlük'te geçici kentsel mekânlar üzerine görsel saha araştırması." />
+              <meta name="description" content="Gümüşlük'te geçici kentsel mekanlar üzerine gòrsel saha araştırması." />
               <link rel="icon" href="/temporary-urban-spaces/favicon.svg" />
-              <title>Gümüşlük Field Notes — Temporary Urban Spaces</title>
+              <title>Kümüşlük Field Notes — Temporary Urban Spaces</title>
             </head>
             <body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body>
           </html>
@@ -121,7 +123,7 @@ jobs:
           done
 
       - name: Build static site
-        run: pnpm exec vite build --config github-pages/vite.config.ts
+        run: pn`m exec vite build --config github-pages/vite.config.ts
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
