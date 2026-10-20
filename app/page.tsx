@@ -1,31 +1,119 @@
-'use client';
-
-import { ArrowDown, ArrowUpRight } from 'lucide-react';
-import { ParticleMorphScene } from '@/components/ParticleMorphScene';
+import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 import { SiteHeader } from '@/components/SiteHeader';
 
-const chapters = [
-  { morph: 0, index: '01', kicker: 'KENT BİR NESNE DEĞİL', title: <>Boşluk,<br/><em>hareket eder.</em></>, body: 'Gümüşlük’ün yarım kalmış yapıları, kıyı eşikleri ve gündelik rotaları tek bir sabit plana sığmaz. Kent, kullanım değiştikçe yeniden çizilir.', link: '/saha', label: 'Sahaya gir' },
-  { morph: 1, index: '02', kicker: 'DAĞINIK BİLGİ / CANLI SAHA', title: <>Her iz,<br/>başka bir <em>olasılık.</em></>, body: 'Yıkım, bekleme, oyun, manzara ve altyapı aynı arazi üzerinde üst üste gelir. Atlas bu parçaları kusursuzlaştırmadan yan yana tutar.', link: '/atlas', label: 'Atlası aç' },
-  { morph: 2, index: '03', kicker: 'KÜÇÜK MÜDAHALE / BÜYÜK ETKİ', title: <>Bir kıvılcım,<br/><em>ortak mekan.</em></>, body: 'Bir sandalye, gölge ya da geçici oyun alanı; tanımsız bir yüzeyi karşılaşma mekanına çevirebilir.', link: '/notlar', label: 'Notları oku' },
-  { morph: 3, index: '04', kicker: 'KIYIDAN DÜNYAYA', title: <>Yerel olan,<br/><em>gezegenseldir.</em></>, body: 'Kıyıdaki her karar; iklim, turizm, hafıza ve müşterek yaşamla bağlıdır. Gümüşlük küçük bir yer değil, yoğun bir mercektir.', link: '/saha', label: 'Araştırmayı gör' },
-  { morph: 4, index: '05', kicker: 'TEMPORARY / URBAN', title: <>Şehir hiçbir<br/>zaman <em>bitmez.</em></>, body: 'Temporary Urban Spaces, tamamlanmamış olanı kusur değil; kolektif bir tasarım alanı olarak okur.', link: '/atlas', label: '64 kareyi keşfet' },
+const sections = [
+  {
+    index: '01',
+    title: 'Saha',
+    text: 'Kıyı, kalıntılar ve gündelik kullanımlar boyunca dört mekansal durum.',
+    href: '/saha',
+  },
+  {
+    index: '02',
+    title: 'Atlas',
+    text: 'Gümüşlük saha gezisinden 64 fotoğraflık görsel kayıt.',
+    href: '/atlas',
+  },
+  {
+    index: '03',
+    title: 'Notlar',
+    text: 'Araştırma notları için ayrılan bölül.',
+    href: '/notlar',
+  },
+  {
+    index: '04',
+    title: 'Manifesto',
+    text: 'Çalışmanın yaklaşım metni için ayrılan bölüm.',
+    href: '/manifesto',
+  },
 ];
 
 export default function Home() {
-  return <main className="home">
-    <SiteHeader />
-    <ParticleMorphScene />
-    <div className="canvas-vignette" aria-hidden="true" />
-    {chapters.map((chapter, i) => <section className={`morph-section side-${i % 2 ? 'right' : 'left'}`} data-morph={chapter.morph} key={chapter.index}>
-      <div className="chapter-copy">
-        <div className="chapter-meta"><span>{chapter.index} / 05</span><span>{chapter.kicker}</span></div>
-        <h1>{chapter.title}</h1>
-        <p>{chapter.body}</p>
-        <a href={chapter.link}>{chapter.label}<ArrowUpRight size={16}/></a>
-      </div>
-      {i === 0 && <div className="scroll-cue"><ArrowDown size={15}/><span>Kaydır / biçim değişsin</span></div>}
-    </section>)}
-    <footer className="home-footer"><img src="/tu-mark.svg" alt="Temporary Urban Spaces"/><p>Gümüşlük’te geçici mekanlar üzerine yürütülen çalışma.</p><span>© 2026</span></footer>
-  </main>;
+  return (
+    <main className="home minimal-home">
+      <SiteHeader />
+
+      <section className="minimal-hero">
+        <div className="hero-index">GÜMÜŞLÜK / 2026</div>
+        <h1>
+          Geçici mekanlar,
+          <br />
+          kalıcı izler.
+        </h1>
+        <div className="hero-intro">
+          <p>Gümüşlük’te geçici mekanlar üzerine yürütülen çalışma.</p>
+          <a href="#arastirma">
+            Araştırmayı incele <ArrowDownRight size={17} />
+          </a>
+        </div>
+      </section>
+
+      <figure className="lead-image">
+        <img
+          src="/field/gumusluk-41.jpg"
+          width="2048"
+          height="1536"
+          alt="Gümüşlük kıyısına bakan tek bir bank"
+          fetchPriority="high"
+        />
+        <figcaption>
+          <span>01</span>
+          <span>Kıyı eşiği, Gümüşlük</span>
+          <span>2026</span>
+        </figcaption>
+      </figure>
+
+      <section className="minimal-statement" id="arastirma">
+        <div className="section-label">ARAŞTIRMA ALANI</div>
+        <div>
+          <h2>Kıyı, kullanım değiştikçe dönüşür.</h2>
+          <p>
+            Yarım kalmış yapılar, gündelik rotalar, boşluklar ve karşılaşmalar
+            aynı sahada yan yana gelir. Bu çalışma Gümüşlük’ü tamamlanmış bir
+            yer olarak değil, sürekli yeniden kurulan bir çevre olarak kaydeder.
+          </p>
+        </div>
+      </section>
+
+      <section className="image-pair" aria-label="Saha fotoğrafları">
+        <figure>
+          <img
+            src="/field/gumusluk-38.jpg"
+            width="2048"
+            height="1536"
+            alt="Gümüşlük kırsalındaki eski taş yapılar"
+            loading="lazy"
+          />
+          <figcaption>Taş yapılar / iç kesim</figcaption>
+        </figure>
+        <figure>
+          <img
+            src="/field/gumusluk-50.jpg"
+            width="2048"
+            height="1536"
+            alt="Kayalık kıyıda denize giren insanlar"
+            loading="lazy"
+          />
+          <figcaption>Gündelik kullanım / kıyı</figcaption>
+        </figure>
+      </section>
+
+      <nav className="research-index" aria-label="Araştırma bölümleri">
+        {sections.map((section) => (
+          <a href={section.href} key={section.index}>
+            <span>{section.index}</span>
+            <h2>{section.title}</h2>
+            <p>{section.text}</p>
+            <ArrowUpRight aria-hidden="true" />
+          </a>
+        ))}
+      </nav>
+
+      <footer className="home-footer minimal-footer">
+        <img src="/tu-mark.svg" alt="Temporary Urban Spaces" />
+        <p>Gümüşlük’te geçici mekanlar üzerine yürütülen çalışma.</p>
+        <span>© 2026</span>
+      </footer>
+    </main>
+  );
 }
