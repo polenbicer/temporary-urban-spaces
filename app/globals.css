@@ -804,6 +804,7 @@ img {
 }
 .studio-hero-image {
   grid-row: 2;
+  grid-column: 1;
   align-self: center;
   justify-self: end;
   width: min(78vw, 1280px);
@@ -854,6 +855,7 @@ img {
 }
 .studio-hero h1 {
   grid-row: 2;
+  grid-column: 1;
   align-self: center;
   position: relative;
   z-index: 1;
@@ -868,6 +870,7 @@ img {
 }
 .studio-hero-bottom {
   grid-row: 3;
+  grid-column: 1;
   position: relative;
   z-index: 2;
   display: grid;
