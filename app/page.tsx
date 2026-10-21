@@ -41,8 +41,8 @@ export default function Home() {
         </div>
         <figure className="studio-hero-image">
           <img
-            src="/field/hero-bench-original.jpg"
-            alt="Gümüşlük kıyısında adalara bakan boş bir bank"
+            src="/field/hero-coastal-ruin.jpg"
+            alt="Gümüşlük kıyısındaki terk edilmiş yapı ve çevresindeki bitki örtüsü"
             width="2048"
             height="1536"
           />
