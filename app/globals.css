@@ -829,6 +829,7 @@ img {
   width: 100%;
   aspect-ratio: 3.2 / 1;
   object-fit: cover;
+  object-position: center 57%;
   filter: saturate(0.42) contrast(0.86) brightness(1.05);
   opacity: 0.72;
   transition:

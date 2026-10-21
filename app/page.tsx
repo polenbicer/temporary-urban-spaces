@@ -41,10 +41,10 @@ export default function Home() {
         </div>
         <figure className="studio-hero-image">
           <img
-            src="/field/hero-bench-ai.jpg"
+            src="/field/hero-bench-original.jpg"
             alt="Gümüşlük kıyısında adalara bakan boş bir bank"
-            width="2243"
-            height="701"
+            width="2048"
+            height="1536"
           />
           <figcaption>
             <span>SAHA KAYDI / 01</span>
