@@ -1,4 +1,5 @@
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
+import { HorizontalArchive } from '@/components/HorizontalArchive';
 import { SiteHeader } from '@/components/SiteHeader';
 
 const sections = [
@@ -17,7 +18,7 @@ const sections = [
   {
     index: '03',
     title: 'Notlar',
-    text: 'Araştırma notları için ayrılan bölül.',
+    text: 'Araştırma notları için ayrılan bölüm.',
     href: '/notlar',
   },
   {
@@ -33,69 +34,36 @@ export default function Home() {
     <main className="home minimal-home">
       <SiteHeader />
 
-      <section className="minimal-hero">
-        <div className="hero-index">GÜMÜŞLÜK / 2026</div>
-        <h1>
-          Geçici mekanlar,
-          <br />
-          kalıcı izler.
-        </h1>
-        <div className="hero-intro">
+      <section className="studio-hero">
+        <div className="studio-hero-meta">
+          <span>GÜMÜŞLÜK / 2026</span>
+          <span>GÖRSEL SAHA ARAŞTIRMASI</span>
+        </div>
+        <h1>Gümüşlük</h1>
+        <div className="studio-hero-bottom">
           <p>Gümüşlük’te geçici mekanlar üzerine yürütülen çalışma.</p>
-          <a href="#arastirma">
-            Araştırmayı incele <ArrowDownRight size={17} />
+          <p>
+            Kıyı, kalıntılar ve gündelik kullanımlar boyunca değişen mekansal
+            durumların görsel kaydı.
+          </p>
+          <a href="#arsiv">
+            Arşivi aç <ArrowDownRight aria-hidden="true" />
           </a>
         </div>
       </section>
 
-      <figure className="lead-image">
-        <img
-          src="/field/gumusluk-41.jpg"
-          width="2048"
-          height="1536"
-          alt="Gümüşlük kıyısına bakan tek bir bank"
-          fetchPriority="high"
-        />
-        <figcaption>
-          <span>01</span>
-          <span>Kıyı eşiği, Gümüşlük</span>
-          <span>2026</span>
-        </figcaption>
-      </figure>
+      <div id="arsiv">
+        <HorizontalArchive />
+      </div>
 
-      <section className="minimal-statement" id="arastirma">
-        <div className="section-label">ARAŞTIRMA ALANI</div>
-        <div>
-          <h2>Kıyı, kullanım değiştikçe dönüşür.</h2>
-          <p>
-            Yarım kalmış yapılar, gündelik rotalar, boşluklar ve karşılaşmalar
-            aynı sahada yan yana gelir. Bu çalışma Gümüşlük’ü tamamlanmış bir
-            yer olarak değil, sürekli yeniden kurulan bir çevre olarak kaydeder.
-          </p>
-        </div>
-      </section>
-
-      <section className="image-pair" aria-label="Saha fotoğrafları">
-        <figure>
-          <img
-            src="/field/gumusluk-38.jpg"
-            width="2048"
-            height="1536"
-            alt="Gümüşlük kırsalındaki eski taş yapılar"
-            loading="lazy"
-          />
-          <figcaption>Taş yapılar / iç kesim</figcaption>
-        </figure>
-        <figure>
-          <img
-            src="/field/gumusluk-50.jpg"
-            width="2048"
-            height="1536"
-            alt="Kayalık kıyıda denize giren insanlar"
-            loading="lazy"
-          />
-          <figcaption>Gündelik kullanım / kıyı</figcaption>
-        </figure>
+      <section className="studio-statement" id="arastirma">
+        <span>ARAŞTIRMA / GÜMÜŞLÜK</span>
+        <h2>Kıyı, kalıntılar ve gündelik kullanımlar.</h2>
+        <p>
+          Yarım kalmış yapılar, geçici yerleşimler, boşluklar ve karşılaşmalar
+          aynı sahada yan yana gelir. Araştırma, bu durumları fotoğraf ve saha
+          notlarıyla bir araya getirir.
+        </p>
       </section>
 
       <nav className="research-index" aria-label="Araştırma bölümleri">
