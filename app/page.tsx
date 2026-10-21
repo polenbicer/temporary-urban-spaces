@@ -39,6 +39,18 @@ export default function Home() {
           <span>GÜMÜŞLÜK / 2026</span>
           <span>GÖRSEL SAHA ARAŞTIRMASI</span>
         </div>
+        <figure className="studio-hero-image">
+          <img
+            src="/field/hero-bench-ai.jpg"
+            alt="Gümüşlük kıyısında adalara bakan boş bir bank"
+            width="2243"
+            height="701"
+          />
+          <figcaption>
+            <span>SAHA KAYDI / 01</span>
+            <span>Gümüşlük, 2026</span>
+          </figcaption>
+        </figure>
         <h1>Gümüşlük</h1>
         <div className="studio-hero-bottom">
           <p>Gümüşlük’te geçici mekanlar üzerine yürütülen çalışma.</p>
