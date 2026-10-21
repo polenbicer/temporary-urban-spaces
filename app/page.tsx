@@ -1,5 +1,6 @@
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 import { HorizontalArchive } from '@/components/HorizontalArchive';
+import { HeroImageSequence } from '@/components/HeroImageSequence';
 import { SiteHeader } from '@/components/SiteHeader';
 
 const sections = [
@@ -39,18 +40,7 @@ export default function Home() {
           <span>GÜMÜŞLÜK / 2026</span>
           <span>GÖRSEL SAHA ARAŞTIRMASI</span>
         </div>
-        <figure className="studio-hero-image">
-          <img
-            src="/field/hero-coastal-ruin.jpg"
-            alt="Gümüşlük kıyısındaki terk edilmiş yapı ve çevresindeki bitki örtüsü"
-            width="2048"
-            height="1536"
-          />
-          <figcaption>
-            <span>SAHA KAYDI / 01</span>
-            <span>Gümüşlük, 2026</span>
-          </figcaption>
-        </figure>
+        <HeroImageSequence />
         <h1>Gümüşlük</h1>
         <div className="studio-hero-bottom">
           <p>Gümüşlük’te geçici mekanlar üzerine yürütülen çalışma.</p>
